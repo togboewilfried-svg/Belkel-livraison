@@ -57,7 +57,7 @@ export default function HowItWorks() {
               <p className="mt-3.5 max-w-[34ch] text-[.92rem] text-white/62">{s.text}</p>
             </div>
             <div className={`relative rounded-[28px] overflow-hidden aspect-[16/8] max-[760px]:aspect-[16/10] ${s.reverse ? 'min-[760px]:order-1' : ''}`}>
-              <img src={s.photo} alt={s.alt} loading="lazy" className="w-full h-full object-cover" />
+              <img src={s.photo} alt={s.alt} loading="eager" decoding="async" className="w-full h-full object-cover" />
             </div>
           </div>
         ))}
