@@ -27,7 +27,23 @@ export default function Nav() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : '';
+    if (!open) return;
+    // overflow:hidden seul ne bloque pas fiablement le scroll de fond sur Safari iOS
+    // et Samsung Internet (le fond continue de défiler pendant l'inertie sous l'overlay,
+    // ce qui donne l'impression que le menu reste figé) : on fige le body par position.
+    const scrollY = window.scrollY;
+    const { body } = document;
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollY}px`;
+    body.style.left = '0';
+    body.style.right = '0';
+    return () => {
+      body.style.position = '';
+      body.style.top = '';
+      body.style.left = '';
+      body.style.right = '';
+      window.scrollTo(0, scrollY);
+    };
   }, [open]);
 
   return (
@@ -79,7 +95,7 @@ export default function Nav() {
 
       {/* Panneau latéral droit */}
       <nav
-        className={`min-[980px]:hidden fixed top-0 right-0 h-screen w-[min(78vw,300px)] flex flex-col items-start text-left gap-0.5 pt-17 px-6 pb-6 bg-white overflow-y-auto z-[60] transition-transform duration-[.32s] ease-[cubic-bezier(.16,1,.3,1)] ${
+        className={`min-[980px]:hidden fixed top-0 right-0 h-screen w-[min(78vw,300px)] bg-white z-[60] transition-transform duration-[.32s] ease-[cubic-bezier(.16,1,.3,1)] ${
           open ? 'translate-x-0 shadow-[-16px_0_40px_rgba(17,24,39,.18)]' : 'translate-x-full shadow-none'
         }`}
       >
@@ -87,29 +103,33 @@ export default function Nav() {
           type="button"
           aria-label="Fermer le menu"
           onClick={() => setOpen(false)}
-          className="self-end absolute top-6 right-6 flex items-center justify-center w-9 h-9 leading-none rounded-full border border-line text-ink-900 text-base"
+          className="absolute top-6 right-6 flex items-center justify-center w-9 h-9 leading-none rounded-full border border-line text-ink-900 text-base"
         >
           ✕
         </button>
-        {MOBILE_LINKS.map((l) => (
+        {/* Liste défilante séparée : le bouton de fermeture reste ainsi toujours
+            atteignable même si le contenu dépasse la hauteur de l'écran. */}
+        <div className="h-full flex flex-col items-start text-left gap-0.5 pt-17 px-6 pb-6 overflow-y-auto overscroll-contain">
+          {MOBILE_LINKS.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              onClick={() => setOpen(false)}
+              className="w-full py-2.5 px-1 font-semibold text-[.95rem] border-b border-line text-ink-700"
+            >
+              {l.label}
+            </a>
+          ))}
           <a
-            key={l.href}
-            href={l.href}
+            href={waLink()}
+            target="_blank"
+            rel="noopener"
             onClick={() => setOpen(false)}
-            className="w-full py-2.5 px-1 font-semibold text-[.95rem] border-b border-line text-ink-700"
+            className="mt-2.5 w-full py-3 px-1 text-center rounded-full bg-near-black text-white font-bold"
           >
-            {l.label}
+            WhatsApp
           </a>
-        ))}
-        <a
-          href={waLink()}
-          target="_blank"
-          rel="noopener"
-          onClick={() => setOpen(false)}
-          className="mt-2.5 w-full py-3 px-1 text-center rounded-full bg-near-black text-white font-bold"
-        >
-          WhatsApp
-        </a>
+        </div>
       </nav>
     </header>
   );
