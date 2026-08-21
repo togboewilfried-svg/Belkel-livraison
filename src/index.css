@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@theme {
+  --color-violet-900: #3B0764;
+  --color-violet-800: #5B21B6;
+  --color-violet-700: #6D28D9;
+  --color-violet-600: #7C3AED;
+  --color-violet-500: #8B5CF6;
+  --color-violet-300: #C4B5FD;
+  --color-violet-100: #EDE4FB;
+  --color-violet-50: #F5F3FF;
+
+  --color-orange-500: #F97316;
+  --color-orange-700: #C2570B;
+
+  --color-near-black: #140820;
+
+  --color-ink-900: #111827;
+  --color-ink-700: #4B5563;
+  --color-ink-500: #6B7280;
+
+  --color-line: rgba(17, 24, 39, .13);
+
+  --font-sans: 'Montserrat', sans-serif;
+  --font-serif: 'Lora', serif;
+
+  --ease-brand: cubic-bezier(.16, 1, .3, 1);
+}
+
+@utility wrap {
+  width: 100%;
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+/* Les styles ci-dessous doivent vivre dans @layer base : Tailwind v4 place les
+   déclarations sans @layer après tous les layers dans la cascade, donc un h1-h4
+   ici (hors layer) écraserait en permanence les utilitaires de couleur comme
+   text-white appliqués aux titres — les rendant illisibles sur fond sombre. */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-ink-700);
+    line-height: 1.65;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-serif);
+    color: var(--color-ink-900);
+    line-height: 1.18;
+    letter-spacing: -.01em;
+  }
+  /* Tailwind Preflight neutralise la taille des titres (font-size: inherit) —
+     il faut donc leur redonner une taille explicite, comme dans le CSS original. */
+  h1 { font-size: clamp(2.3rem, 4.6vw, 3.6rem); font-weight: 700; }
+  h2 { font-size: clamp(1.6rem, 3vw, 2.1rem); font-weight: 700; }
+  h3, h4 { font-size: 1.05rem; font-weight: 700; }
+}
+
+/* Masque la scrollbar horizontale des cartes FAQ tout en gardant le scroll fonctionnel */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
